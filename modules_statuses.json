@@ -1,0 +1,10 @@
+{
+    "Project": true,
+    "Admin": true,
+    "Common": true,
+    "Service": true,
+    "Blog": true,
+    "Product": true,
+    "Front": true,
+    "AlbumPhoto": true
+}
