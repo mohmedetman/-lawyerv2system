@@ -32,7 +32,8 @@ class CaseFileResource extends JsonResource
                 'en' =>$this->lawyer->first()->name_en ,
                 'ar' => $this->lawyer->first()->name_ar
             ],
-            'employee_name' => $this->employee->name ,
+            "user_name" =>$this->user->name ?? "" ,
+            'employee_name' => $this->employee->name ?? "me" ,
 
          ];
     }

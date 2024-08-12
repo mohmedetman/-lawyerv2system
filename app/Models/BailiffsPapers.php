@@ -11,8 +11,11 @@ class BailiffsPapers extends Model
     protected $fillable = [
        'bailiffs_pen_en',
         'bailiffs_pen_ar',
-        'user_code',
         'user_id',
+        'employee_id',
+        "model_type",
+        'lawyer_id',
+        "user_type",
         'announcment_time',
         'bailiff_reply',
         'user_name',
@@ -22,4 +25,16 @@ class BailiffsPapers extends Model
         'permission',
         'bailiffs_num'
     ];
+    public function lawyer()
+    {
+     return $this->hasOne(Lawyer::class, 'id', 'lawyer_id');
+    }
+    public function user()
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
+    public function employee()
+    {
+      return $this->hasOne(Employee::class, 'id', 'employee_id');
+    }
 }

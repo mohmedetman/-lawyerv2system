@@ -10,8 +10,10 @@ class CaseFile extends Model
     use HasFactory;
     protected $fillable = [
         'lawyer_id',
+        'user_type',
+        "user_id",
         'court_en',
-        'user_id',
+        'employee_id',
         'created_by',
         'model_type',
         'user_status_en',

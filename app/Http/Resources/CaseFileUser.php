@@ -3,11 +3,10 @@
 namespace App\Http\Resources;
 
 use App\Models\Employee;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CaseFileEmployee extends JsonResource
+class CaseFileUser extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -28,12 +27,10 @@ class CaseFileEmployee extends JsonResource
             'decision_ar' => $this->decision_ar,
             'permission' => $this->permission,
             'status' => $this->status,
-            'create_by_me' => $this->model_type == "Employee" ? 1 : 0,
             'lawyer_name' => [
                 'en' =>$this->lawyer->first()->name_en ,
                 'ar' => $this->lawyer->first()->name_ar
             ],
-            'employee_name' => Employee::where('id',$this->user_id)->first()->name ?? "me"  ,
         ];
     }
 }

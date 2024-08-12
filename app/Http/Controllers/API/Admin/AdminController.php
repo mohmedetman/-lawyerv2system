@@ -6,6 +6,7 @@ namespace App\Http\Controllers\API\Admin;
 use App\Http\Resources\LawyerResource;
 use App\Models\Admin;
 use App\Models\Lawyer;
+use App\Models\LawyerDepartment;
 use App\Models\Subscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -44,6 +45,33 @@ class AdminController
         }
         return response()->json(['faild auth '],401);
     }
+    public function addDepartment(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name_en' => 'required_without:name_ar|string|max:255',
+            'name_ar' => 'required_without:name_en|string|max:255',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->first()
+            ], 404);
+        }
+        LawyerDepartment::create([
+            'name_en'=>$request->name_en,
+            'name_ar'=>$request->name_ar,
+
+        ]);
+        return response()->json([
+            'message' => 'Department added successfully'
+        ],201);
+    }
+    public function showAllDepartment()
+    {
+        return response()->json([
+            'departments' => LawyerDepartment::all()
+        ]);
+    }
+
     public function addLawyer(Request $request)
     {
 
@@ -52,6 +80,7 @@ class AdminController
             'name_ar' => 'required_without:name_en|string|max:255',
             'email' => 'required|email|unique:lawyers,email',
             'phone_number' => 'required|string|max:20',
+            'department_id' => 'required|string|max:20,exists:departments,id',
             'password' => 'required|string|min:6',
             'code' => 'required|string|unique:lawyers,code',
         ]);
@@ -61,9 +90,6 @@ class AdminController
             ], 404);
         }
         $new_password ='';
-//        if($request->post('password')) {
-//            $new_password  = ;
-//        }
         $lawyer = Lawyer::create([
             'name_en' => $request->name_en,
             'name_ar' => $request->name_ar,
@@ -72,6 +98,9 @@ class AdminController
             'password'=>bcrypt($request->password),
             'phone_number' => $request->phone_number,
             'admin_id'=>Auth::user()->id,
+            'bio_ar'=>$request->bio_ar,
+            'bio_en'=>$request->bio_en,
+            'department_id' =>$request->department_id,
             'specialization' => $request->specialization,
         ]);
         return response()->json([
@@ -80,7 +109,7 @@ class AdminController
     }
     public function showAllLawyer()
     {
-      $lawyers = Lawyer::all();
+      $lawyers = Lawyer::with('department')->get();
       return response()->json([LawyerResource::collection($lawyers)]);
     }
     public function addSubscribeLawyer(Request $request,$id)

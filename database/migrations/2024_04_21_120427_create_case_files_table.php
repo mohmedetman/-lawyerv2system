@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->integer('created_by');
             $table->text('court_en')->nullable();
-            $table->string('user_id')->nullable();
             $table->text('user_status_en')->nullable();
             $table->text('enemy_status_en')->nullable();
             $table->text('last_session_en')->nullable();
@@ -25,7 +24,10 @@ return new class extends Migration
             $table->text('enemy_status_ar')->nullable();
             $table->text('last_session_ar')->nullable();
             $table->string('decision_ar')->nullable();
-            $table->string('permission');
+            $table->string('permission')->nullable();
+            $table->integer('user_id')->nullable();
+            $table->integer('employee_id')->nullable();
+            $table->string('user_type')->nullable();
             $table->string('status')->default('pending')->nullable();
             $table->timestamps();
         });

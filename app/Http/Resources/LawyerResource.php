@@ -15,12 +15,16 @@ class LawyerResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $sub = Subscription::all();
+//        $sub = Subscription::all();
         return [
             'id'=>$this->id,
             'name_en' =>$this->name_ne,
             'name_ar'=>$this->name_ar,
             'email'=>$this->email,
+            'department' => [
+                'en'=> $this->department->name_en ?? '',
+                'ar'=> $this->department->name_ar ?? '',
+            ],
 //            'subscription'=> $sub->where('id',$this->id)->first() ? true : false,
             'phone_number'=>$this->phone_number
         ];

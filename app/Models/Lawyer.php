@@ -16,10 +16,16 @@ class Lawyer extends Model
         'phone_number',
         'password',
         'code',
+        'department_id',
+        'bio_ar',
+        'bio_en',
         'specialization',
         'admin_id'
     ];
     protected $hidden = [
         'password',
     ];
+    public function department() {
+        return $this->hasOne(LawyerDepartment::class, 'id', 'department_id');
+    }
 }
