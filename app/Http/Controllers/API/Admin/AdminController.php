@@ -101,7 +101,6 @@ class AdminController
             'bio_ar'=>$request->bio_ar,
             'bio_en'=>$request->bio_en,
             'department_id' =>$request->department_id,
-            'specialization' => $request->specialization,
         ]);
         return response()->json([
             'message' => 'Lawyer created successfully',

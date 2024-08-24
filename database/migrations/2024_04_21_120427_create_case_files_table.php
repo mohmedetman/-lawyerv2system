@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('case_files', function (Blueprint $table) {
+        Schema::create('case_files_11', function (Blueprint $table) {
             $table->id();
             $table->integer('created_by');
             $table->text('court_en')->nullable();
-            $table->text('user_status_en')->nullable();
             $table->text('enemy_status_en')->nullable();
             $table->text('last_session_en')->nullable();
             $table->string('decision_en')->nullable();
@@ -25,9 +24,13 @@ return new class extends Migration
             $table->text('last_session_ar')->nullable();
             $table->string('decision_ar')->nullable();
             $table->string('permission')->nullable();
-            $table->integer('user_id')->nullable();
+            $table->integer('customer_id')->nullable();
             $table->integer('employee_id')->nullable();
             $table->string('user_type')->nullable();
+            $table->unsignedBigInteger('case_type_id'); // Foreign key to case_types
+            $table->unsignedBigInteger('case_degree_id'); // Foreign key to case_degrees
+            $table->foreign('case_type_id')->references('id')->on('case_types')->onDelete('cascade');
+            $table->foreign('case_degree_id')->references('id')->on('case_degrees')->onDelete('cascade');
             $table->string('status')->default('pending')->nullable();
             $table->timestamps();
         });

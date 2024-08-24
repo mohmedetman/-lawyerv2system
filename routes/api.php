@@ -28,7 +28,7 @@ Route::post('login',[App\Http\Controllers\API\AuthController::class,'login']);
 Route::post('admin-login',[\App\Http\Controllers\API\Admin\AdminController::class,'adminLogin']);
 
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum')->group( function () {
     Route::get('me',[App\Http\Controllers\API\AuthController::class,'me']);
     Route::get('userRoleRedirection',[App\Http\Controllers\API\AuthController::class,'userRoleRedirection']);
     Route::middleware(['adminToken'])->group(function () {
@@ -58,15 +58,15 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('edit_employees/{user_id}',[App\Http\Controllers\API\UserController::class,'editEmployees']);
         Route::delete('delete_employees/{user_id}',[App\Http\Controllers\API\UserController::class,'deleteEmployees']);
     });
-    Route::get('getCaseFileById/{case_id}',[\App\Http\Controllers\API\CaseController::class,'getCaseFileById']);
-    Route::get('getAllPendingCaseFileSide',[\App\Http\Controllers\API\CaseController::class,'getAllPendingCaseFileSide']);
-    Route::post('addCaseFile',[App\Http\Controllers\API\CaseController::class,'addCaseFile']);
-    Route::get('getCaseFileForSpecificClient',[App\Http\Controllers\API\CaseController::class,'getCaseFileForSpecificClient']);
-    Route::post('editCaseFile/{case_id}',[App\Http\Controllers\API\CaseController::class,'editCaseFile']);
-    Route::delete('deleteCaseFile/{case_id}',[App\Http\Controllers\API\CaseController::class,'deleteCaseFile']);
-    Route::get('getAllCaseFile',[App\Http\Controllers\API\CaseController::class,'getAllCaseFile']);
-
-//    Route::get('getCaseFileBycaseId/{case_id}',[App\Http\Controllers\API\CaseController::class,'getCaseFileBycaseId']);
+//    Route::get('getCaseFileById/{case_id}',[\App\Http\Controllers\API\CaseController::class,'getCaseFileById']);
+//    Route::get('getAllPendingCaseFileSide',[\App\Http\Controllers\API\CaseController::class,'getAllPendingCaseFileSide']);
+//    Route::post('addCaseFile',[App\Http\Controllers\API\CaseController::class,'addCaseFile']);
+//    Route::get('getCaseFileForSpecificClient',[App\Http\Controllers\API\CaseController::class,'getCaseFileForSpecificClient']);
+//    Route::post('editCaseFile/{case_id}',[App\Http\Controllers\API\CaseController::class,'editCaseFile']);
+//    Route::delete('deleteCaseFile/{case_id}',[App\Http\Controllers\API\CaseController::class,'deleteCaseFile']);
+//    Route::get('getAllCaseFile',[App\Http\Controllers\API\CaseController::class,'getAllCaseFile']);
+        /*    BailiffPaper Routes
+        */
     Route::post('addBailiffPaper',[App\Http\Controllers\API\BailiffController::class,'addBailiffPaper']);
     Route::post('editBailiffPaper/{bailiff_id}',[App\Http\Controllers\API\BailiffController::class,'editBailiffPaper']);
     Route::delete('deleteBailiffPaper/{bailiff_id}',[App\Http\Controllers\API\BailiffController::class,'deleteBailiffPaper']);
@@ -74,6 +74,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('confirmBailiffPaper/{case_id}',[App\Http\Controllers\API\BailiffController::class,'confirmBailiffPaper']);
     Route::post('rejectBailiffPaper/{case_id}',[App\Http\Controllers\API\BailiffController::class,'rejectBailiffPaper']);
     Route::get('getBailifPaperByBailifId/{bailiff_id}',[App\Http\Controllers\API\BailiffController::class,'getBailifPaperByBailifId']);
+    /*    Agencies Routes
+       */
     Route::post('addAgenciesIndex',[App\Http\Controllers\API\AgenciesController::class,'addAgenciesIndex']);
     Route::post('editAgenciesIndex/{ageny_id}',[App\Http\Controllers\API\AgenciesController::class,'editAgenciesIndex']);
     Route::delete('deleteAgenciesIndex/{ageny_id}',[App\Http\Controllers\API\AgenciesController::class,'deleteAgenciesIndex']);

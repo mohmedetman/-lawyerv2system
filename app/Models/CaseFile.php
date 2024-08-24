@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Modules\Case\Entities\CaseType;
 
 class CaseFile extends Model
 {
@@ -11,7 +12,7 @@ class CaseFile extends Model
     protected $fillable = [
         'lawyer_id',
         'user_type',
-        "user_id",
+        "customer_id",
         'court_en',
         'employee_id',
         'created_by',
@@ -27,6 +28,8 @@ class CaseFile extends Model
         'permission',
         'decision_ar',
         'status',
+        'case_type_id',
+        'case_degree_id'
     ];
     public function lawyer()
     {
@@ -35,5 +38,13 @@ class CaseFile extends Model
     public function employee()
     {
         return $this->hasOne(User::class, 'id', 'user_id');
+    }
+    public function caseType()
+    {
+        return $this->hasOne(CaseType::class, 'id', 'case_type_id');
+    }
+    public function caseDegree()
+    {
+        return $this->hasOne(CaseType::class, 'id', 'case_type_id');
     }
 }

@@ -9,9 +9,8 @@ class AgenciesIndex extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'user_code',
         'user_id',
-        'user_name',
+        'lawyer_id',
         'agencies_num_en',
         'office_doc_en',
         'agencies_type_en',
@@ -21,7 +20,7 @@ class AgenciesIndex extends Model
         'date',
         'status',
         'permission',
-        'agencies_imagePath',
-        'agencies_imageUrl'
+        'image',
+        'employee_id'
     ];
 }

@@ -35,7 +35,6 @@ class UserController extends Controller
                 Rule::unique('users')->ignore($user_id),
             ],
             'password' => 'nullable|string|min:8',
-//            'code' => 'nullable|string|max:10',
             'phone_number' => 'nullable|string|max:15',
             'personal_id' => 'nullable|string|size:14',
             'address' => 'nullable|string|max:255',
@@ -43,7 +42,7 @@ class UserController extends Controller
             'user_type' => 'nullable|string|in:lawyer,client',
             'litigationDegree_en' => 'nullable|string|max:255',
             'litigationDegree_ar' => 'nullable|string|max:255',
-            'lawyer_id' => 'nullable|exists:lawyers,id',
+//            'lawyer_id' => 'nullable|exists:lawyers,id',
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -51,8 +50,6 @@ class UserController extends Controller
                 'errors' => $validator->errors(),
             ], 422);
         }
-
-
         $auth = Auth::user();
         $client = User::where('id',$user_id)->where('lawyer_id',$auth->id)->first();
         if (!isset($client)){
@@ -82,7 +79,7 @@ class UserController extends Controller
             'litigationDegree_ar' => $litigationDegree_ar,
             'lawyer_id' => $auth->id,
         ]);
-            return response()->json([
+        return response()->json([
                 'message' => 'user updated successfully'
             ]);
 
