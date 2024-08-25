@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('work_distributions', function (Blueprint $table) {
+        Schema::create('case_employees', function (Blueprint $table) {
             $table->id();
-            
+            $table->string('status')->default('pending')->nullable();
+            $table->integer('employee_id')->nullable();
             $table->timestamps();
         });
     }
@@ -23,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('work_distributions');
+        Schema::dropIfExists('case_employees');
     }
 };

@@ -25,13 +25,11 @@ return new class extends Migration
             $table->string('decision_ar')->nullable();
             $table->string('permission')->nullable();
             $table->integer('customer_id')->nullable();
-            $table->integer('employee_id')->nullable();
             $table->string('user_type')->nullable();
             $table->unsignedBigInteger('case_type_id'); // Foreign key to case_types
             $table->unsignedBigInteger('case_degree_id'); // Foreign key to case_degrees
             $table->foreign('case_type_id')->references('id')->on('case_types')->onDelete('cascade');
             $table->foreign('case_degree_id')->references('id')->on('case_degrees')->onDelete('cascade');
-            $table->string('status')->default('pending')->nullable();
             $table->timestamps();
         });
     }

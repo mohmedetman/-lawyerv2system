@@ -12,10 +12,12 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Laravel\Sanctum\PersonalAccessToken;
 use App\Models\CaseFile;
+use Modules\Case\Entities\CaseEmployee;
 
 class CaseController extends Controller
 {
@@ -23,18 +25,35 @@ class CaseController extends Controller
     public function addCaseFile(Request $request){
         $token = request()->bearerToken();
         $personal_token = PersonalAccessToken::find($token)->tokenable_type;
+//        dd($personal_token);
         $rules = [
             'court_en' => 'required_without:court_ar|string|max:255',
             'court_ar' => 'required_without:court_en|string|max:255',
             "customer_id" => 'required|integer|exists:customers,id',
-            "employee_id" => 'nullable|integer|exists:employees,id',
+//            'employee_ids' => [
+//                'nullable',
+//                'array',
+//            ],
+//            'employee_ids.*' => [
+//                'nullable',
+//                'integer',
+//                'exists:employees,id',
+//            ],
+//            "employee_id" => 'nullable|integer|exists:employees,id',
             "case_type_id" => 'required|integer|exists:case_types,id',
             "case_degree_id" => 'required|integer|exists:case_degrees,id',
 
         ];
+        $flag = 0 ;
         if ($personal_token == "App\Models\Lawyer") {
             $rules['permission'] = ['required', 'string', 'max:255', Rule::in(['me', 'another'])];
+            $rules['employee_ids']  = ['required', 'array'];
+            $rules['employee_ids.*'] = ['required', 'integer', 'exists:employees,id'];
         }
+//        if ($personal_token == "App\Models\Employee") {
+//
+//
+//        }
         $validator = Validator::make($request->all(), $rules, [
             'permission.in' => 'The permission field must be one of the following options: me, another.',
         ]);
@@ -43,25 +62,44 @@ class CaseController extends Controller
         }
         if ($personal_token == "App\Models\Lawyer") {
             $user = Auth::user();
-            if($request->permission == "another" && !isset($request->employee_id)) {
+            if($request->permission == "another" && !isset($request->employee_ids)) {
                 return response()->json("employee should be choice", 400);
 
             }
+            $flag = 1;
         }
-        CaseFile::create([
-            'court_en' => $request->court_en,
-            'case_degree_id'=>$request->case_degree_id,
-            'case_type_id'=>$request->case_type_id,
-            'created_by'=> Auth::user()->id ,
-            'employee_id' => ($personal_token == "App\Models\Employee") ? Auth::user()->id : (isset($request->employee_id) ? $request->employee_id : null),
-            "customer_id" =>$request->customer_id ,
-            'model_type' => $personal_token == "App\Models\Lawyer" ? "Lawyer" : "Employee",
-            'court_ar' => $request->court_ar,
-            'lawyer_id' => $personal_token == "App\Models\Lawyer" ? Auth::user()->id : Employee::where('id',PersonalAccessToken::find($token)->tokenable_id)->first()->lawyer_id,
-            'permission' => $personal_token == "App\Models\Lawyer" ?$request->permission : null,
-            'status' => $personal_token == "App\Models\Lawyer" ? 'confirmed': 'pending',
-            'actions' =>$request->actions
-        ]);
+        try {
+            DB::beginTransaction();
+            $case_file =  CaseFile::updateOrCreate([
+                'court_en' => $request->court_en,
+                'case_degree_id'=>$request->case_degree_id,
+                'case_type_id'=>$request->case_type_id,
+                'created_by'=> Auth::user()->id ,
+                "customer_id" =>$request->customer_id ,
+                'model_type' => $personal_token == "App\Models\Lawyer" ? "Lawyer" : "Employee",
+                'court_ar' => $request->court_ar,
+                'lawyer_id' => $personal_token == "App\Models\Lawyer" ? Auth::user()->id : Employee::where('id',PersonalAccessToken::find($token)->tokenable_id)->first()->lawyer_id,
+                'permission' => $personal_token == "App\Models\Lawyer" ?$request->permission : null,
+                'actions' =>$request->actions
+            ]);
+            if ($flag == 1) {
+                foreach ($request->employee_ids as $key => $value) {
+                    CaseEmployee::updateOrCreate([
+                            'employee_id' => $value,
+                             'status' => 'confirmed',
+                            'case_id' => $case_file->id,
+                    ],['employee_id' => $value,'case_id' => $case_file->id]);
+                }
+
+            }
+            DB::commit();
+        }catch(\Exception $e){
+            DB::rollBack();
+            throw $e;
+
+        }
+
+
         return response()->json([
             'message' => 'Case File created successfully'
         ],201);
