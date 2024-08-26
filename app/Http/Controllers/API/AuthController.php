@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Sanctum\PersonalAccessToken;
+use Modules\Customer\Entities\Customer;
 
 class AuthController extends Controller
 {
@@ -39,7 +40,9 @@ class AuthController extends Controller
                 $user = User::create([
                     'name_en' => $request->name_en,
                     'name_ar' => $request->name_ar,
-                    'password' => bcrypt($request->password),
+                    'password' => Hash::make($request->password),
+
+//                    'password' => bcrypt($request->password),
                     'code' => $request->code,
                     'email'=>$request->email,
                     'phone_number' => $request->phone_number,
@@ -67,7 +70,9 @@ class AuthController extends Controller
                 $user = Employee::create([
                     'name_en' => $request->name_en,
                     'name_ar' => $request->name_ar,
-                    'password' => bcrypt($request->password),
+                    'password' => Hash::make($request->password),
+
+//                    'password' => bcrypt($request->password),
                     'code' => $request->code,
                     'email'=>$request->email,
                     'phone_number' => $request->phone_number,
@@ -95,7 +100,6 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'type'=>'required|in:lawyer,employee,user',
             'email'=>'required',
             'password'=>'required',
         ]);
@@ -104,58 +108,18 @@ class AuthController extends Controller
                 'error' => $validator->errors()->first()
             ], 404);
         }
-        if($request->type == "lawyer") {
-            $lawyer =Lawyer::where('email',$request->email)->first();
-            if (!isset($lawyer)) {
-                return response()->json([ 'error' => 'auth Faild'
-                ],404);
-            }
-            $plainTextPassword = $request->post('password');
-            $hashedPassword = $lawyer->password;
-            if($lawyer && password_verify($plainTextPassword, $hashedPassword) ) {
-                $dev_name = $request->dev_name ?? $request->userAgent();
-                $token = $lawyer->createToken($dev_name);
-                return response()->json([
-                    'token'=>$token->plainTextToken,
-                    'lawyer' => $lawyer ,
-                ],201);
-            }
+        $lawyer = Lawyer::where('email',$request->email)->first();
+        if($lawyer && Hash::check($request->password,$lawyer->password)){
+            return $this->createToken($lawyer,'lawyer');
         }
-        if($request->type == "user") {
-            $user =User::where('email',$request->email)->first();
-            if (!isset($user)) {
-                return response()->json([ 'error' => 'auth Faild'
-                ],404);
-            }
-            $plainTextPassword = $request->post('password');
-            $hashedPassword = $user->password;
-            if($user && password_verify($plainTextPassword, $hashedPassword) ) {
-                $dev_name = $request->dev_name ?? $request->userAgent();
-                $token = $user->createToken($dev_name);
-                return response()->json([
-                    'token'=>$token->plainTextToken,
-                    'user' => $user ,
-                ],201);
-            }
+        $employee = Employee::where('email',$request->email)->first();
+        if($employee && Hash::check($request->password,$employee->password)){
+            return $this->createToken($employee,'employee');
         }
-        if($request->type == "employee") {
-            $employee =Employee::where('email',$request->email)->first();
-            if (!isset($employee)) {
-                return response()->json([ 'error' => 'auth Faild'
-                ],404);
-            }
-            $plainTextPassword = $request->post('password');
-            $hashedPassword = $employee->password;
-            if($employee && password_verify($plainTextPassword, $hashedPassword) ) {
-                $dev_name = $request->dev_name ?? $request->userAgent();
-                $token = $employee->createToken($dev_name);
-                return response()->json([
-                    'token'=>$token->plainTextToken,
-                    'employee' => $employee ,
-                ],201);
-            }
+        $customer = Customer::where('email',$request->email)->first();
+        if($customer && Hash::check($request->password,$customer->password)){
+            return $this->createToken($customer,'customer');
         }
-
         return response()->json(['faild auth '],401);
 
 
@@ -187,5 +151,12 @@ class AuthController extends Controller
     public function me()
     {
      return  response()->json(auth()->user());
+    }
+    private function createToken($user,$type) {
+        $token = $user->createToken($type.'-'.now())->plainTextToken;
+        return response()->json([
+                    'token'=>$token,
+                    $type => $user ,
+                ],201);
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Resources\CustomerResource;
 use App\Http\Resources\UserResource;
 use App\Models\Employee;
 use App\Models\User;
+use App\Rules\ChechEmailUniqe;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -46,7 +47,7 @@ class CustomerController extends Controller
             'password' => 'required|string|min:8|confirmed',
             'code' => 'required|string|max:10|unique:customers,code',
             'personal_id' => 'required|string|size:14',
-            'email' => 'required|string|email|max:255|unique:customers,email',
+            'email' => ['required','string','email','max:255',new ChechEmailUniqe ],
             'gender' => 'required|in:male,female',
             'addresses' => 'required|array',
             'addresses.*' => 'required|string|max:255',

@@ -8,8 +8,10 @@ use App\Models\Admin;
 use App\Models\Lawyer;
 use App\Models\LawyerDepartment;
 use App\Models\Subscription;
+use App\Rules\ChechEmailUniqe;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class AdminController
@@ -78,7 +80,7 @@ class AdminController
         $validator = Validator::make($request->all(), [
             'name_en' => 'required_without:name_ar|string|max:255',
             'name_ar' => 'required_without:name_en|string|max:255',
-            'email' => 'required|email|unique:lawyers,email',
+            'email' => ['required','email',new ChechEmailUniqe],
             'phone_number' => 'required|string|max:20',
             'department_id' => 'required|string|max:20,exists:departments,id',
             'password' => 'required|string|min:6',
@@ -95,7 +97,9 @@ class AdminController
             'name_ar' => $request->name_ar,
             'email' => $request->email,
             'code'=>$request->code,
-            'password'=>bcrypt($request->password),
+            'password' => Hash::make($request->password),
+
+//            'password'=>bcrypt($request->password),
             'phone_number' => $request->phone_number,
             'admin_id'=>Auth::user()->id,
             'bio_ar'=>$request->bio_ar,

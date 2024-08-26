@@ -21,6 +21,8 @@ use Laravel\Sanctum\PersonalAccessToken;
 class CaseController extends Controller
 {
     public function addCaseFile(Request $request){
+        $auth =Auth::guard('lawyer')->check();
+        dd($auth);
         $token = request()->bearerToken();
         $personal_token = PersonalAccessToken::find($token)->tokenable_type;
         $rules = [

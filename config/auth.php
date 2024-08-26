@@ -40,6 +40,20 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'lawyer' => [
+            'driver' => 'session',
+            'provider' => 'lawyers',
+        ],
+
+        'employee' => [
+            'driver' => 'session',
+            'provider' => 'employees',
+        ],
+
+        'customer' => [
+            'driver' => 'session',
+            'provider' => 'customers',
+        ],
     ],
 
     /*
@@ -64,6 +78,21 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
+        'lawyers' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Lawyer::class,
+        ],
+
+        'employees' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Employee::class,
+        ],
+
+//        'customers' => [
+//            'driver' => 'eloquent',
+//            'model' => App\Models\Customer::class,
+//        ],
+
 
         // 'users' => [
         //     'driver' => 'database',
@@ -93,6 +122,12 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
+            'table' => 'password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'lawyers' => [
+            'provider' => 'lawyers',
             'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
