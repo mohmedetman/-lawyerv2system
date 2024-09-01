@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Validator;
+use Modules\Case\Entities\WorkDistribution;
 
 class WorkDistributionController extends Controller
 {
@@ -17,20 +19,27 @@ class WorkDistributionController extends Controller
         return view('case::index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('case::create');
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request): RedirectResponse
-    {
-        //
+
+   function store(Request $request): \Illuminate\Http\JsonResponse
+   {
+        $validator = Validator::make($request->all(),[
+            'employee_id' => 'required|integer|exists:employees,id',
+            'case_id' => 'required|integer|exists:cases,id',
+            'action'=>'required',
+            'notes'=>'required'
+        ] );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation errors',
+                'errors' => $validator->errors(),
+            ],422);
+        }
+
+        WorkDistribution::create($request->all());
+        return response()->json([]);
+
     }
 
     /**

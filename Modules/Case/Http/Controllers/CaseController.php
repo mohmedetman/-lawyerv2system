@@ -23,9 +23,10 @@ use function PHPUnit\Framework\returnArgument;
 class CaseController extends Controller
 {
 
-    public function addCaseFile(Request $request){
+    public function addCaseFile(Request $request)
+    {
         $token = request()->bearerToken();
-        $user =Auth::user();
+        $user = Auth::user();
         $personal_token = PersonalAccessToken::find($token)->tokenable_type;
         $rules = [
             'court_en' => 'required_without:court_ar|string|max:255',
@@ -35,10 +36,10 @@ class CaseController extends Controller
             "case_degree_id" => 'required|integer|exists:case_degrees,id',
 
         ];
-        $flag = 0 ;
+        $flag = 0;
         if ($personal_token == "Modules\Lawyer\Entities\Lawyer") {
             $rules['permission'] = ['required', 'string', 'max:255', Rule::in(['me', 'another'])];
-            $rules['employee_ids']  = ['required', 'array'];
+            $rules['employee_ids'] = ['required', 'array'];
             $rules['employee_ids.*'] = ['required', 'integer', 'exists:employees,id'];
         }
         $validator = Validator::make($request->all(), $rules, [
@@ -49,7 +50,7 @@ class CaseController extends Controller
         }
         if ($personal_token == "Modules\Lawyer\Entities\Lawyer") {
             $user = Auth::user();
-            if($request->permission == "another" && !isset($request->employee_ids)) {
+            if ($request->permission == "another" && !isset($request->employee_ids)) {
                 return response()->json("employee should be choice", 400);
 
             }
@@ -57,45 +58,43 @@ class CaseController extends Controller
         }
         try {
             DB::beginTransaction();
-            $case_file =  CaseFile::updateOrCreate([
+            $case_file = CaseFile::updateOrCreate([
                 'court_en' => $request->court_en,
-                'case_degree_id'=>$request->case_degree_id,
-                'case_type_id'=>$request->case_type_id,
-                'created_by'=> Auth::user()->id ,
-                "customer_id" =>$request->customer_id ,
-                'status'=>$request->status ?? 'confirm',
+                'case_degree_id' => $request->case_degree_id,
+                'case_type_id' => $request->case_type_id,
+                'created_by' => Auth::user()->id,
+                "customer_id" => $request->customer_id,
+                'status' => $request->status ?? 'confirm',
                 'model_type' => $personal_token == "Modules\Lawyer\Entities\Lawyer" ? "Lawyer" : "Employee",
                 'court_ar' => $request->court_ar,
                 'lawyer_id' => $personal_token == "Modules\Lawyer\Entities\Lawyer" ? Auth::user()->id : Auth::user()->lawyer_id,
-                'permission' => $personal_token == "Modules\Lawyer\Entities\Lawyer" ?$request->permission : null,
-                'actions' =>$request->actions
+                'permission' => $personal_token == "Modules\Lawyer\Entities\Lawyer" ? $request->permission : null,
+                'actions' => $request->actions
             ]);
             if ($flag == 1) {
                 foreach ($request->employee_ids as $key => $value) {
                     CaseEmployee::updateOrCreate([
-                            'employee_id' => $value,
-                             'status' => 'confirmed',
-                            'case_id' => $case_file->id,
-                    ],['employee_id' => $value,'case_id' => $case_file->id]);
+                        'employee_id' => $value,
+                        'status' => 'confirmed',
+                        'case_id' => $case_file->id,
+                    ], ['employee_id' => $value, 'case_id' => $case_file->id]);
                 }
 
             }
-            if ($flag ==0) {
+            if ($flag == 0) {
                 CaseEmployee::create([
                     'employee_id' => $user->id,
                     'case_id' => $case_file->id,
                 ]);
             }
             DB::commit();
-        }
-        catch(\Exception $e)
-        {
+        } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
         }
         return response()->json([
             'message' => 'Case File created successfully'
-        ],201);
+        ], 201);
 
     }
 
@@ -116,7 +115,7 @@ class CaseController extends Controller
 
         if ($personal_token == "Modules\Lawyer\Entities\Lawyer") {
             $rules['permission'] = ['sometimes', 'required', 'string', 'max:255', Rule::in(['me', 'another'])];
-            $rules['employee_ids']  = ['sometimes', 'required', 'array'];
+            $rules['employee_ids'] = ['sometimes', 'required', 'array'];
             $rules['employee_ids.*'] = ['sometimes', 'required', 'integer', 'exists:employees,id'];
         }
 
@@ -140,7 +139,7 @@ class CaseController extends Controller
                 'customer_id' => $request->customer_id ?? $caseFile->customer_id,
                 'model_type' => $personal_token == "Modules\Lawyer\Entities\Lawyer" ? "Lawyer" : "Employee",
                 'court_ar' => $request->court_ar ?? $caseFile->court_ar,
-                'status'=>$request->status ?? 'confirm',
+                'status' => $request->status ?? 'confirm',
                 'lawyer_id' => $personal_token == "Modules\Lawyer\Entities\Lawyer" ? Auth::user()->id : Employee::where('id', PersonalAccessToken::find($token)->tokenable_id)->first()->lawyer_id,
                 'permission' => $request->permission ?? $caseFile->permission,
                 'actions' => $request->actions ?? $caseFile->actions,
@@ -170,86 +169,88 @@ class CaseController extends Controller
             'message' => 'Case File updated successfully'
         ], 200);
     }
-    public function deleteCaseFile($case_id){
+
+    public function deleteCaseFile($case_id)
+    {
         $token = request()->bearerToken();
         $personal_token = PersonalAccessToken::find($token)->tokenable_type;
         $user = Auth::user();
-        if($personal_token != "Modules\Lawyer\Entities\Lawyer"){
+        if ($personal_token != "Modules\Lawyer\Entities\Lawyer") {
             return response()->json('Not Allowed');
         }
-            $case_file = CaseFile::where('id', $case_id)
-                ->where('lawyer_id', $user->id)
-                ->first();
-            if(!isset($case_file)){
-                return response()->json(['error'=>'case not found'], 404);
-            }
-            CaseEmployee::where('case_id', $case_file->id)->delete();
-            $case_file->delete();
-            return response()->json(['success'=>'case deleted'], 200);
+        $case_file = CaseFile::where('id', $case_id)
+            ->where('lawyer_id', $user->id)
+            ->first();
+        if (!isset($case_file)) {
+            return response()->json(['error' => 'case not found'], 404);
+        }
+        CaseEmployee::where('case_id', $case_file->id)->delete();
+        $case_file->delete();
+        return response()->json(['success' => 'case deleted'], 200);
 
     }
 
-    public function getAllCaseFile(){
+    public function getAllCaseFile()
+    {
         $token = request()->bearerToken();
         $personal_token = PersonalAccessToken::find($token)->tokenable_type;
         $user = Auth::user();
-        if($personal_token == "Modules\Lawyer\Entities\Lawyer"){
+        if ($personal_token == "Modules\Lawyer\Entities\Lawyer") {
             $case_file =
                 CaseFile::
-                 with(['caseDegree','caseType','employee'])
-                ->where('status','!=','rejected')
-                ->where('lawyer_id',$user->id)
-                ->get();
+                with(['caseDegree', 'caseType', 'employee'])
+                    ->where('status', '!=', 'rejected')
+                    ->where('lawyer_id', $user->id)
+                    ->get();
             return response()->json([CaseFileResource::collection($case_file)]);
-        }
-        elseif ($personal_token == "Modules\Lawyer\Entities\Employee"){
-            $case_file = CaseFile::with(['caseDegree','caseType'])
-                ->whereHas('employee',function($query) use($user){
-                    $query->where('status','=','confirmed')
-                        ->where('employee_id',$user->id)
-                    ->where('lawyer_id',$user->lawyer_id);
+        } elseif ($personal_token == "Modules\Lawyer\Entities\Employee") {
+            $case_file = CaseFile::with(['caseDegree', 'caseType'])
+                ->where('status', '!=', 'rejected')
+                ->whereHas('employee', function ($query) use ($user) {
+                    $query->where('status', '=', 'confirmed')
+                        ->where('employee_id', $user->id)
+                        ->where('lawyer_id', $user->lawyer_id);
                 })
                 ->get();
             return response()->json([CaseFileResource::collection($case_file)]);
-        }
-        elseif ($personal_token == "Modules\Customer\Entities\Customer"){
-            $case_file = CaseFile::with(['caseDegree','caseType'])
-                ->where('status','!=','rejected')
-                ->where('customer_id',$user->id)
+        } elseif ($personal_token == "Modules\Customer\Entities\Customer") {
+            $case_file = CaseFile::with(['caseDegree', 'caseType'])
+                ->where('status', '!=', 'rejected')
+                ->where('customer_id', $user->id)
                 ->get();
             return response()->json([CaseFileResource::collection($case_file)]);
         }
     }
-    public function confirmCaseFile(Request $request ,$case_id){
-        $request->validate([
-            'employee_id'=>'required',
-        ]);
+
+    public function confirmCaseFile(Request $request, $id)
+    {
         $token = request()->bearerToken();
         $personal_token = PersonalAccessToken::find($token)->tokenable_type;
         $user = Auth::user();
-        if($personal_token == "Modules\Lawyer\Entities\Lawyer"){
-            $case =CaseEmployee
-                ::where('case_id', $case_id)
-                ->where('employee_id',$request->employee_id)
-                ->get();
-            if(!$case) {
-                return response()->json(['error'=>'Case not found'], 404);
+        if ($personal_token == "Modules\Lawyer\Entities\Lawyer") {
+            $case = CaseEmployee
+                ::where('case_id', $id)
+                ->where('employee_id', $request->employee_id)
+                ->first();
+            if (!$case) {
+                return response()->json(['error' => 'Case not found'], 404);
             }
-
             $case->update(['status' => 'confirmed']);
-            return response()->json(['success'=>'case updated'], 201);
+            return response()->json(['success' => 'case updated'], 201);
 
         }
 
     }
-    public function rejectCaseFile($case_id){
+
+    public function rejectCaseFile($case_id)
+    {
         $token = request()->bearerToken();
         $personal_token = PersonalAccessToken::find($token)->tokenable_type;
         $user = Auth::user();
-        if($personal_token == "Modules\Employee\Entities\Employee"){
+        if ($personal_token == "Modules\Employee\Entities\Employee") {
             return response()->json('Not Allowed');
         }
-        if($personal_token == "Modules\Lawyer\Entities\Lawyer") {
+        if ($personal_token == "Modules\Lawyer\Entities\Lawyer") {
             $case_file = CaseFile::where('id', $case_id)
                 ->where('lawyer_id', $user->id)->first();
             if (!isset($case_file)) {
@@ -259,90 +260,108 @@ class CaseController extends Controller
             return response()->json(['success' => 'case updated'], 201);
         }
     }
-    public function getAllPendingCaseFileSide(){
+
+    public function getAllPendingCaseFileSide()
+    {
         $token = request()->bearerToken();
         $personal_token = PersonalAccessToken::find($token)->tokenable_type;
         $user = Auth::user();
-        if($personal_token == "Modules\Lawyer\Entities\Lawyer"){
+        if ($personal_token == "Modules\Lawyer\Entities\Lawyer") {
             $case_file = CaseFile::with('lawyer')
-                ->where('status','!=','rejected')
-                ->Where('status','pending')
-                ->where('lawyer_id',$user->id)
+                ->where('status', '!=', 'rejected')
+                ->Where('status', 'pending')
+                ->where('lawyer_id', $user->id)
                 ->get();
             return response()->json([CaseFileResource::collection($case_file)]);
         }
     }
+
     public function getCaseFileById($id)
     {
         $token = request()->bearerToken();
         $personal_token = PersonalAccessToken::find($token)->tokenable_type;
         $user = Auth::user();
-        if($personal_token == "Modules\Employee\Entities\Employee"){
-            $case = CaseFile::where('id', $id)
-                ->where('employee_id',$user->id)
-                ->where('status','!=','rejected')
-                ->first();
-            if(!isset($case)){
-                return response()->json(['error'=>'case not found'], 404);
+        if ($personal_token == "Modules\Lawyer\Entities\Lawyer") {
+            $case_file =
+                CaseFile::
+                with(['caseDegree', 'caseType', 'employee'])
+                    ->where('status', '!=', 'rejected')
+                    ->where('lawyer_id', $user->id)
+                    ->where('id', $id)
+                    ->first();
+            if (!$case_file) {
+                return response()->json(['error' => 'Case not found'], 404);
             }
-            return response()->json([CaseFileResource::make($case)]);
-        }
-        if($personal_token == "Modules\Lawyer\Entities\Lawyer"){
-            $case = CaseFile::where('id', $id)
-                ->where('lawyer_id',$user->id)
+            return response()->json([CaseFileResource::make($case_file)]);
+        } elseif ($personal_token == "Modules\Lawyer\Entities\Employee") {
+            $case_file = CaseFile::with(['caseDegree', 'caseType'])
+                ->where('status', '!=', 'rejected')
+                ->whereHas('employee', function ($query) use ($user) {
+                    $query->where('status', '=', 'confirmed')
+                        ->where('employee_id', $user->id)
+                        ->where('lawyer_id', $user->lawyer_id);
+                })
+                ->where('id', $id)
                 ->first();
-            if(!isset($case)){
-                return response()->json(['error'=>'case not found'], 404);
+            if (!$case_file) {
+                return response()->json(['error' => 'Case not found'], 404);
             }
-            return response()->json([CaseFileResource::make($case)]);    }
-
-    }
-    public function getAllPendingCaseFileemployeeSide(){
-        $token = request()->bearerToken();
-        $personal_token = PersonalAccessToken::find($token)->tokenable_type;
-        $user = Auth::user();
-        if($personal_token == "Modules\Employee\Entities\Employee"){
-            $case_file = CaseFile::with('lawyer')
-                ->where('status','!=','rejected')
-                ->Where('status','pending')
-                ->where('employee_id',$user->id)
-                ->get();
-            return response()->json([CaseFileResource::collection($case_file)]);
-        }
-    }
-    public function getCaseFileBycaseId($case_id){
-        $user = Auth::user();
-        if($user){
-            return response()->json([
-                'caseFile' => CaseFile::find($case_id)
-            ]);
+            return response()->json([CaseFileResource::make($case_file)]);
+        } elseif ($personal_token == "Modules\Customer\Entities\Customer") {
+            $case_file = CaseFile::with(['caseDegree', 'caseType'])
+                ->where('status', '!=', 'rejected')
+                ->where('customer_id', $user->id)
+                ->where('id', $id)
+                ->first();
+            if (!$case_file) {
+                return response()->json(['error' => 'Case not found'], 404);
+            }
+            return response()->json([CaseFileResource::make($case_file)]);
         }
 
     }
-    public function storeContactsMessages(Request $request){
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:255',
-            'subject' => 'required|string|max:255',
-            'message' => 'required|string|max:255' ,
-        ]);
+
+    public function getAllEmployeeConfirm($case_id)
+    {
+       $case_file = CaseEmployee::where('case_id', $case_id)
+                    ->with('employee')
+                    ->where('status', '=', 'pending')
+                   ->whereHas('case', function ($query) {
+                    $query->where('lawyer_id',Auth::user()->id);
+                    })
+                 ->get();
+       return $case_file ;
+    }
+    public function assignCaseFileToEmployee(Request $request ,$case_id)
+    {
+        $validator = Validator::make($request->all(),[
+            'employee_id' => 'required',
+        ] );
+        $case_id = CaseFile::where('id', $case_id)->first();
+        if (!$case_id) {
+            return response()->json(['error' => 'Case not found'], 404);
+        }
+        $employee = Employee::where('id', $request->employee_id)->where('lawyer_id',Auth::user()->id)->first();
+        if (!$employee) {
+            return response()->json(['error' => 'employee not found'], 404);
+        }
         if ($validator->fails()) {
-            return response()->json($validator->errors()->first(), 400);
+            return response()->json([
+                'message' => 'Validation errors',
+                'errors' => $validator->errors(),
+            ], 422);
         }
-        Contact::create([
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'subject' => $request->subject,
-            'message' => $request->message
-        ]);
+        CaseEmployee::updateOrCreate(
+            [
+                'case_id' => $case_id->id,
+                'employee_id' => $request->employee_id
+            ],
+            [
+                'status' => 'confirmed'
+            ]
+        );
 
-        return response()->json([
-            'message' => 'Contacts Messages added successfully'
-        ]);
-    }
-    public function getAllContactsMessages(){
-        return response()->json([
-            'contactsMessages' => Contact::all()
-        ]);
+        return response()->json(['success' => 'case updated'], 201);
     }
 }
+

@@ -31,8 +31,6 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::get('me',[App\Http\Controllers\API\AuthController::class,'me']);
     Route::get('userRoleRedirection',[App\Http\Controllers\API\AuthController::class,'userRoleRedirection']);
     Route::middleware(['lawyerToken'])->group(function () {
-        Route::post('confirmCaseFile/{case_id}',[App\Http\Controllers\API\CaseController::class,'confirmCaseFile']);
-        Route::post('rejectCaseFile/{case_id}',[App\Http\Controllers\API\CaseController::class,'rejectCaseFile']);
         Route::get('getAllServices',[App\Http\Controllers\API\ServicesController::class,'getAllServices']);
         Route::post('addServices',[App\Http\Controllers\API\ServicesController::class,'addServices']);
         Route::get('getSpecificService/{service_id}',[App\Http\Controllers\API\ServicesController::class,'getSpecificService']);
@@ -48,11 +46,11 @@ Route::middleware('auth:sanctum')->group( function () {
 //        Route::post('edit_employees/{user_id}',[App\Http\Controllers\API\UserController::class,'editEmployees']);
 //        Route::delete('delete_employees/{user_id}',[App\Http\Controllers\API\UserController::class,'deleteEmployees']);
     });
+
 //    Route::get('getCaseFileById/{case_id}',[\App\Http\Controllers\API\CaseController::class,'getCaseFileById']);
 //    Route::get('getAllPendingCaseFileSide',[\App\Http\Controllers\API\CaseController::class,'getAllPendingCaseFileSide']);
 //    Route::post('addCaseFile',[App\Http\Controllers\API\CaseController::class,'addCaseFile']);
 //    Route::get('getCaseFileForSpecificClient',[App\Http\Controllers\API\CaseController::class,'getCaseFileForSpecificClient']);
-//    Route::post('editCaseFile/{case_id}',[App\Http\Controllers\API\CaseController::class,'editCaseFile']);
 //    Route::delete('deleteCaseFile/{case_id}',[App\Http\Controllers\API\CaseController::class,'deleteCaseFile']);
 //    Route::get('getAllCaseFile',[App\Http\Controllers\API\CaseController::class,'getAllCaseFile']);
         /*    BailiffPaper Routes
