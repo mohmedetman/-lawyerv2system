@@ -18,8 +18,7 @@ class LawyerToken
     {
         $token = $request->bearerToken();
         $personal_token = PersonalAccessToken::findToken($token);
-//        dd($personal_token);
-        if($personal_token->tokenable_type != "App\Models\Lawyer"){
+        if($personal_token->tokenable_type != "Modules\Lawyer\Entities\Lawyer"){
             return response()->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
         }
         return $next($request);

@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Modules\Lawyer\Http\Controllers\api\EmployeeController;
+use Modules\Lawyer\Http\Controllers\api\EmployeeDeatialController;
 
 /*
     |--------------------------------------------------------------------------
@@ -13,7 +15,21 @@ use Illuminate\Support\Facades\Route;
     | is assigned the "api" middleware group. Enjoy building your API!
     |
 */
+Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware(['lawyerToken'])->group(function () {
+        Route::post('createNewEmployee',[EmployeeController::class,'createNewEmployee']);
+        Route::get('getAllEmployees',[\Modules\Lawyer\Http\Controllers\api\EmployeeController::class,'getAllEmployees']);
+        Route::get('employees/{employee_id}',[\Modules\Lawyer\Http\Controllers\api\EmployeeController::class,'getEmployeesById']);
+        Route::post('edit_employees/{user_id}',[\Modules\Lawyer\Http\Controllers\api\EmployeeController::class,'editEmployees']);
+        Route::delete('delete_employees/{user_id}',[\Modules\Lawyer\Http\Controllers\api\EmployeeController::class,'deleteEmployees']);
 
-Route::middleware(['auth:sanctum'])->prefix('v1')->name('api.')->group(function () {
-    Route::get('lawyer', fn (Request $request) => $request->user())->name('lawyer');
+        Route::post('add-employee-phone/{customer_id}', [EmployeeDeatialController::class, 'addEmployeePhone']);
+        Route::post('add-employee-address/{customer_id}', [EmployeeDeatialController::class, 'addEmployeeAddress']);
+        Route::put('edit-employee-phones/{phoneId}', [EmployeeDeatialController::class, 'editPhone']);
+        Route::delete('/delete-employee-phones/{phoneId}', [EmployeeDeatialController::class, 'deletePhone']);
+        Route::put('/edit-employee-addresses/{addressId}', [EmployeeDeatialController::class, 'editAddress']);
+        Route::delete('/delete-employee-addresses/{addressId}', [EmployeeDeatialController::class, 'deleteAddress']);
+
+    });
 });
+

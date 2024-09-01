@@ -1,13 +1,16 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Lawyer\Entities;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Lawyer;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 
-class Employee extends Model
+class Employee extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -53,8 +56,26 @@ class Employee extends Model
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = Hash::make($value);
+    }
     public function lawyer()
     {
         return $this->hasOne(Lawyer::class, 'id', 'lawyer_id');
+    }
+
+
+
+
+
+    public function addresses()
+    {
+        return $this->hasMany(EmployeeAddress::class,'employee_id','id');
+    }
+
+    public function phones()
+    {
+        return $this->hasMany(EmployeePhone::class,'employee_id','id');
     }
 }

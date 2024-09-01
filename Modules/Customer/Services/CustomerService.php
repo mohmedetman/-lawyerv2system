@@ -9,10 +9,11 @@ use Modules\Customer\Entities\Customer;
 
 class CustomerService
 {
-    public function createCustomer(array $data)
+    public function  createCustomer(array $data)
     {
         return DB::transaction(function () use ($data) {
             $customer = Customer::create([
+                'lawyer_id'=>Auth::user()->id,
                 'name_en' => $data['name_en'] ?? '',
                 'name_ar' => $data['name_ar'] ?? '',
                 'password' => Hash::make($data['password']),
@@ -20,8 +21,8 @@ class CustomerService
                 'email' => $data['email'],
                 'personal_id' => $data['personal_id'],
                 'gender' => $data['gender'],
-                'litigationDegree_en' => $data['litigationDegree_en'],
-                'litigationDegree_ar' => $data['litigationDegree_ar'],
+//                'litigationDegree_en' => $data['litigationDegree_en'],
+//                'litigationDegree_ar' => $data['litigationDegree_ar'],
             ]);
             foreach ($data['addresses'] as $index => $address) {
                 $isPrimary = $index == 0 ? true : false;
@@ -33,7 +34,7 @@ class CustomerService
             foreach ($data['phone_numbers'] as $phone) {
                 $customer->phones()->create(['phone_number' => $phone]);
             }
-            $customer->lawyers()->attach(Auth::user()->id);
+//            $customer->lawyers()->attach(Auth::user()->id);
 
             return $customer->load(['addresses', 'phones']);
         });
@@ -53,7 +54,6 @@ class CustomerService
             if (isset($data['addresses'])) {
                 foreach ($data['addresses'] as $addressData) {
                     if (isset($addressData['is_primary']) && $addressData['is_primary']) {
-                        // Unset previous primary addresses
                         $customer->addresses()->update(['is_primary' => false]);
                     }
                     $customer->addresses()->create($addressData);

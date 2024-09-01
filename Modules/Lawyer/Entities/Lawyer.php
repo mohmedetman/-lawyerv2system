@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Lawyer\Entities;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\LawyerDepartment;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;

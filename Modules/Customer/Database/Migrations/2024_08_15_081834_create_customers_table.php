@@ -19,8 +19,6 @@ return new class extends Migration
             $table->string('name_ar')->nullable();
             $table->text('personal_id')->nullable();
             $table->string('gender')->nullable();
-            $table->string('litigationDegree_en')->nullable();
-            $table->string('litigationDegree_ar')->nullable();
             $table->string('email')->unique();
             $table->integer('lawyer_id');
             //$table->timestamp('email_verified_at')->nullable();

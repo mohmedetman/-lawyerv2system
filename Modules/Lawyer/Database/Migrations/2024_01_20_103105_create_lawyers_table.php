@@ -20,6 +20,11 @@ return new class extends Migration
             $table->string('password');
             $table->string('code')->nullable();
             $table->integer('admin_id');
+            $table->integer('status')->default(0);
+            $table->string('bio_ar')->nullable();
+            $table->string('bio_en')->nullable();
+            $table->integer('department_id');
+
             $table->timestamps();
         });
     }

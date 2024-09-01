@@ -19,7 +19,6 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::post('login',[App\Http\Controllers\API\AuthController::class,'login']);
 //routes  admin to create lawyer and show
 
 
@@ -31,14 +30,6 @@ Route::post('admin-login',[\App\Http\Controllers\API\Admin\AdminController::clas
 Route::middleware('auth:sanctum')->group( function () {
     Route::get('me',[App\Http\Controllers\API\AuthController::class,'me']);
     Route::get('userRoleRedirection',[App\Http\Controllers\API\AuthController::class,'userRoleRedirection']);
-    Route::middleware(['adminToken'])->group(function () {
-        Route::post('/addDepartment',[\App\Http\Controllers\API\Admin\AdminController::class,'addDepartment']);
-        Route::get('/showAllDepartment',[\App\Http\Controllers\API\Admin\AdminController::class,'showAllDepartment']);
-        Route::post('/add-lawyer',[\App\Http\Controllers\API\Admin\AdminController::class,'addLawyer']);
-        Route::get('/show-all-lawyer',[\App\Http\Controllers\API\Admin\AdminController::class,'showAllLawyer']);
-        Route::post('/add-subscribe-lawyer/{id}',[\App\Http\Controllers\API\Admin\AdminController::class,'addSubscribeLawyer']);
-
-    });
     Route::middleware(['lawyerToken'])->group(function () {
         Route::post('confirmCaseFile/{case_id}',[App\Http\Controllers\API\CaseController::class,'confirmCaseFile']);
         Route::post('rejectCaseFile/{case_id}',[App\Http\Controllers\API\CaseController::class,'rejectCaseFile']);
@@ -48,15 +39,14 @@ Route::middleware('auth:sanctum')->group( function () {
         Route::post('updateSpecificService/{service_id}',[App\Http\Controllers\API\ServicesController::class,'updateSpecificService']);
         Route::delete('deleteSpecificService/{service_id}',[App\Http\Controllers\API\ServicesController::class,'deleteSpecificService']);
         Route::post('createNewUser',[App\Http\Controllers\API\AuthController::class,'createNewUser']);
-        Route::post('createNewEmployee',[App\Http\Controllers\API\AuthController::class,'createNewEmployee']);
         Route::get('getAllusers',[App\Http\Controllers\API\UserController::class,'getAllusers']);
         Route::get('getUserById/{user_id}',[App\Http\Controllers\API\UserController::class,'getUserById']);
         Route::post('editUsers/{user_id}',[App\Http\Controllers\API\UserController::class,'editUsers']);
         Route::delete('deleteUser/{user_id}',[App\Http\Controllers\API\UserController::class,'deleteUser']);
-        Route::get('getAllEmployees',[App\Http\Controllers\API\UserController::class,'getAllEmployees']);
-        Route::get('employees/{user_id}',[App\Http\Controllers\API\UserController::class,'getEmployeesById']);
-        Route::post('edit_employees/{user_id}',[App\Http\Controllers\API\UserController::class,'editEmployees']);
-        Route::delete('delete_employees/{user_id}',[App\Http\Controllers\API\UserController::class,'deleteEmployees']);
+//        Route::get('getAllEmployees',[App\Http\Controllers\API\UserController::class,'getAllEmployees']);
+//        Route::get('employees/{user_id}',[App\Http\Controllers\API\UserController::class,'getEmployeesById']);
+//        Route::post('edit_employees/{user_id}',[App\Http\Controllers\API\UserController::class,'editEmployees']);
+//        Route::delete('delete_employees/{user_id}',[App\Http\Controllers\API\UserController::class,'deleteEmployees']);
     });
 //    Route::get('getCaseFileById/{case_id}',[\App\Http\Controllers\API\CaseController::class,'getCaseFileById']);
 //    Route::get('getAllPendingCaseFileSide',[\App\Http\Controllers\API\CaseController::class,'getAllPendingCaseFileSide']);

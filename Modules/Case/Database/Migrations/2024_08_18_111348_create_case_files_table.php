@@ -23,7 +23,6 @@ return new class extends Migration
             $table->unsignedBigInteger('case_degree_id'); // Foreign key to case_degrees
             $table->foreign('case_type_id')->references('id')->on('case_types')->onDelete('cascade');
             $table->foreign('case_degree_id')->references('id')->on('case_degrees')->onDelete('cascade');
-            $table->string('status')->default('pending')->nullable();
             $table->string('model_type');
             $table->string('permission')->nullable();
             $table->text('actions')->nullable();

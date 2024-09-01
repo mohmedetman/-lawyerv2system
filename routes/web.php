@@ -14,10 +14,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    dd('d');
-    return view('welcome');
-});
+//Route::get('/', function () {
+////   dd ( \Modules\Customer\Entities\Customer::all());
+//    dd('d');
+//    return view('welcome');
+//});
 Route::post('store', [App\Http\Controllers\HomeController::class,'store'])->name('store');
 //Auth::routes();
 

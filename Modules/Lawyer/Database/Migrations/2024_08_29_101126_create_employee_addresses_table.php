@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('case_files', function (Blueprint $table) {
-            $table->integer('lawyer_id')->nullable();
-            $table->string('model_type')->nullable();
+        Schema::create('employee_addresses', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('employee_id');
+            $table->string('address');
+            $table->integer('is_primary')->nullable();
+            $table->timestamps();
         });
     }
 
@@ -22,8 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('case_files', function (Blueprint $table) {
-            $table->dropColumn(['lawyer_id','model_type']);
-        });
+        Schema::dropIfExists('employee_addresses');
     }
 };

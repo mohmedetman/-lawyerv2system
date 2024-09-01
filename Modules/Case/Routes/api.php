@@ -29,17 +29,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('getAllPendingCaseFileSide',[CaseController::class,'getAllPendingCaseFileSide']);
         Route::post('addCaseFile',[CaseController::class,'addCaseFile']);
         Route::get('getCaseFileForSpecificClient',[CaseController::class,'getCaseFileForSpecificClient']);
-        Route::post('editCaseFile/{case_id}',[CaseController::class,'editCaseFile']);
+        Route::post('editCaseFile/{case_id}',[CaseController::class,'editCaseFile']);//confirmCaseFile
+        Route::post('confirmCaseFile/{case_id}',[CaseController::class,'confirmCaseFile']);//confirmCaseFile
         Route::delete('deleteCaseFile/{case_id}',[CaseController::class,'deleteCaseFile']);
         Route::get('getAllCaseFile',[CaseController::class,'getAllCaseFile']);
-    Route::middleware(['adminToken'])->group(function () {
+        Route::middleware(['adminToken'])->group(function () {
         Route::get('getAllCaseType',[CaseTypeController::class,'index']);
         Route::post('editCaseType/{id}',[CaseTypeController::class,'update']);
         Route::post('addCaseType',[CaseTypeController::class,'store']);
         Route::post('deleteCaseType/{id}',[CaseTypeController::class,'destroy']);
-
-
-
         Route::get('getAllCaseDegree',[CaseDegreeController::class,'index']);
         Route::post('editCaseDegree/{id}',[CaseDegreeController::class,'update']);
         Route::post('addCaseDegree',[CaseDegreeController::class,'store']);

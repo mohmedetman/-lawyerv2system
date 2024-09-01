@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\Admin;
+namespace Modules\Admin\Http\Controllers\Api;
 
 
 use App\Http\Resources\LawyerResource;
@@ -76,7 +76,6 @@ class AdminController
 
     public function addLawyer(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'name_en' => 'required_without:name_ar|string|max:255',
             'name_ar' => 'required_without:name_en|string|max:255',

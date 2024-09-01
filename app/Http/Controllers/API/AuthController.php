@@ -4,8 +4,6 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
-use App\Models\Employee;
-use App\Models\Lawyer;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,6 +11,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Sanctum\PersonalAccessToken;
 use Modules\Customer\Entities\Customer;
+use Modules\Lawyer\Entities\Employee;
+use Modules\Lawyer\Entities\Lawyer;
 
 class AuthController extends Controller
 {
@@ -71,8 +71,6 @@ class AuthController extends Controller
                     'name_en' => $request->name_en,
                     'name_ar' => $request->name_ar,
                     'password' => Hash::make($request->password),
-
-//                    'password' => bcrypt($request->password),
                     'code' => $request->code,
                     'email'=>$request->email,
                     'phone_number' => $request->phone_number,
@@ -80,7 +78,6 @@ class AuthController extends Controller
                     'address' => $request->address,
                     'gender' => $request->gender,
                     'lawyer_id'=>$auth->id ,
-//                'user_type' => 'client',
                     'litigationDegree_en' => $request->litigationDegree_en,
                     'litigationDegree_ar' => $request->litigationDegree_ar,
                 ]);
@@ -99,6 +96,7 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        dd($request);
         $validator = Validator::make($request->all(), [
             'email'=>'required',
             'password'=>'required',
