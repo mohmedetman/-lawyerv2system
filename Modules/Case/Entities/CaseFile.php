@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\Case\Database\factories\CaseFileFactory;
+use Modules\Customer\Entities\Customer;
 use Modules\Lawyer\Entities\Employee;
 
 class CaseFile extends Model
@@ -49,6 +50,10 @@ class CaseFile extends Model
     public function caseDegree()
     {
         return $this->hasOne(CaseType::class, 'id', 'case_type_id');
+    }
+    public function customer()
+    {
+        return $this->hasOne(Customer::class, 'id','customer_id');
     }
 }
 

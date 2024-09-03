@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('power_attrotneys', function (Blueprint $table) {
+        Schema::create('power_attorneys', function (Blueprint $table) {
             $table->id();
-            $table->integer('numeric_classification')->nullable();
-            $table->string('alphabetic_classification', 5)->nullable();
-            $table->string('type')->nullable();
+            $table->string('numeric_classification');
+            $table->string('alphabetic_classification');
+            $table->string('image');
+            $table->string('notes');
             $table->integer('customer_id');
-            $table->string('notes')->nullable();
-            $table->string('image')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('power_attrotneys');
+        Schema::dropIfExists('power_attorneys');
     }
 };

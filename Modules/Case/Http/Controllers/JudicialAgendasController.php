@@ -20,7 +20,7 @@ class JudicialAgendasController extends Controller
     public function index()
     {
 
-            $results = JudicialAgendas::select(
+            $judAge = JudicialAgendas::select(
                 'judicial_agendas.next_agenda_date',
                 'judicial_agendas.id as id',
                 'judicial_agendas.previous_agenda_date',
@@ -43,8 +43,7 @@ class JudicialAgendasController extends Controller
                 ->join('case_types','case_types.id','=','case_files.case_type_id')
                 ->join('case_degrees','case_degrees.id','=','case_files.case_degree_id')
                 ->get();
-
-        return \Modules\Case\Transformers\JudicialAgendas::collection($results);
+        return \Modules\Case\Transformers\JudicialAgendas::collection($judAge);
     }
 
     public function store(Request $request)
@@ -54,9 +53,9 @@ class JudicialAgendasController extends Controller
         $model_instance = $personal_token->tokenable;
         $model_class = get_class($model_instance);
         $validator = Validator::make($request->all(), [
-            'case_id' => 'required|integer',
-            'next_agenda_date' => 'required_without:previous_agenda_date|date_format:Y-m-d H:i:s',
-            'previous_agenda_date' => 'required_without:next_agenda_date|date_format:Y-m-d H:i:s',
+            'case_id' => 'required|integer|exists:case_files,id',
+            'next_agenda_date' => 'required_without:previous_agenda_date|date_format:Y-m-d H:i',
+            'previous_agenda_date' => 'required_without:next_agenda_date|date_format:Y-m-d H:i',
             'notes' => 'nullable|string',
         ]);
         if ($validator->fails()) {
@@ -119,7 +118,6 @@ class JudicialAgendasController extends Controller
             return response()->json(['message' => 'Judicial Agenda not found'], 404);
         }
         $agenda->delete();
-//        JudicialAgendas::destroy($id);
-        return response()->json(null, 204);
+        return response()->json(['massage'=>'sucess'], 200);
     }
 }

@@ -17,7 +17,8 @@ return new class extends Migration
             $table->datetime('next_agenda_date');
             $table->datetime('previous_agenda_date');
             $table->integer('employee_id')->nullable();
-           $table->string('model_type');
+            $table->integer('lawyer_id');
+            $table->string('model_type');
             $table->string('actions')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();

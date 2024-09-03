@@ -41,5 +41,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::apiResource('work-distributions', WorkDistributionController::class);
+    Route::apiResource('power-attorney', \Modules\Case\Http\Controllers\PowerAttorneyController::class);
+
 
 });

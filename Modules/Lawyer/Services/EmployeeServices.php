@@ -16,14 +16,15 @@ class EmployeeServices
             $employee = Employee::create([
                 'lawyer_id'=>Auth::user()->id,
                 'name_en' => $data['name_en'] ?? '',
-                'name_ar' => $data['name_ar'] ?? '',
-                'password' => Hash::make($data['password']),
+                'name_ar' => $data['name_ar'] ?? '',//bcrypt
+//                'password' => bcrypt($data['password']),//bcrypt
+                'password' => Hash::make($data['password']),//bcrypt
                 'code' => $data['code'],
                 'email' => $data['email'],
                 'personal_id' => $data['personal_id'],
                 'gender' => $data['gender'],
-                'litigationDegree_en' => $data['litigationDegree_en'],
-                'litigationDegree_ar' => $data['litigationDegree_ar'],
+                'litigationDegree_en' => $data['litigationDegree_en']??'',
+                'litigationDegree_ar' => $data['litigationDegree_ar']??'',
             ]);
             foreach ($data['addresses'] as $index => $address) {
                 $employee->addresses()->create([

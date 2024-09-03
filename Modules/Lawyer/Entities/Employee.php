@@ -56,10 +56,7 @@ class Employee extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-    public function setPasswordAttribute($value)
-    {
-        $this->attributes['password'] = Hash::make($value);
-    }
+
     public function lawyer()
     {
         return $this->hasOne(Lawyer::class, 'id', 'lawyer_id');

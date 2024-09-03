@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Testing\Fluent\Concerns\Has;
@@ -27,10 +28,10 @@ class EmployeeController extends Controller
     public function createNewEmployee(Request $request)
     {
 
-        $validator = Validator::make($request->all(), [
+        $data = Validator::make($request->all(), [
             'name_en' => 'required_without:name_ar|string|max:255',
             'name_ar' => 'required_without:name_en|string|max:255',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:8',
             'code' => 'required|string|max:10|unique:customers,code',
             'personal_id' => 'required|string|size:14',
             'email' => ['required','string','email','max:255',new ChechEmailUniqe ],
@@ -39,20 +40,57 @@ class EmployeeController extends Controller
             'addresses.*' => 'required|string|max:255',
             'phone_numbers' => 'required|array',
             'phone_numbers.*' => 'required|integer',
-            'litigationDegree_en' => 'required_without:litigationDegree_en|string|max:255',
-            'litigationDegree_ar' => 'required_without:litigationDegree_ar|string|max:255',
+//            'litigationDegree_en' => 'required_without:litigationDegree_ar|string|max:255',
+//            'litigationDegree_ar' => 'required_without:litigationDegree_en|string|max:255',
         ]);
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
+        if ($data->fails()) {
+            return response()->json($data->errors(), 400);
         }
 
-       return $this->employeeService->createEmployee($request->all());
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Customer created successfully',
-            'user' => $customer,
-        ], 201);
+
+//            return DB::transaction(function () use ($request) {
+                $employee = Employee::create([
+                    'lawyer_id' => Auth::user()->id,
+                    'name_en' =>$request->name_en ?? '',
+                    'name_ar' =>$request->name_ar ?? '',
+                  'password' =>   Hash::make($request->password),
+//                    'password' =>  password_hash('admin123', PASSWORD_BCRYPT),
+//                    'password' =>  bcrypt($request->password), // password_hash('admin123', PASSWORD_BCRYPT)
+                    'code' => $request->code,
+                    'email' => $request->email,
+                    'personal_id' => $request->personal_id,
+                    'gender' => $request->gender,
+                    'litigationDegree_en' =>$request->litigationDegree_en ?? '',
+                    'litigationDegree_ar' => $request->litigationDegree_ar ?? '',
+                ]);
+
+                foreach ($request->addresses as $address) {
+                    $employee->addresses()->create([
+                        'address' => $address,
+                        'is_primary' => 1,
+                    ]);
+                }
+
+                foreach ($request->phone_numbers as $phone) {
+                    $employee->phones()->create(['phone_number' => $phone]);
+                }
+
+                return $employee->load(['addresses', 'phones']);
+//            });
+
+
+
+//        $plainTextPassword = $request->post('password');
+//        dd(Hash::make($plainTextPassword) ,Hash::check($plainTextPassword, 'admin123'));
+
+//       return $this->employeeService->createEmployee($request->all());
+
+//        return response()->json([
+//            'success' => true,
+//            'message' => 'Customer created successfully',
+//            'user' => $customer,
+//        ], 201);
 
     }
     public function getAllEmployees()

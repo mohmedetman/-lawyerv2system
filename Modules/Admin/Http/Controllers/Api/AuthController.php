@@ -10,6 +10,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Testing\Fluent\Concerns\Has;
 use Laravel\Sanctum\PersonalAccessToken;
 use Modules\Admin\Http\Requests\LoginRequest;
 use Modules\Customer\Entities\Customer;
@@ -29,7 +30,6 @@ class AuthController extends Controller
             return $this->createToken($employee,'employee');
         }
         $customer = Customer::where('email',$request->email)->first();
-//        dd($customer,Hash::check($request->password,$customer->password));
         if($customer && Hash::check($request->password,$customer->password)){
             return $this->createToken($customer,'customer');
         }

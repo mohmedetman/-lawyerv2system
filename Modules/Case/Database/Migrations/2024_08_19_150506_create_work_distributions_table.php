@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('work_distributions', function (Blueprint $table) {
             $table->id();
-            
+            $table->
+
             $table->timestamps();
         });
     }

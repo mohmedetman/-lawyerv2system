@@ -13,10 +13,6 @@ class JudicialAgendas extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     */
-
    protected  $guarded = [] ;
    protected $hidden = ['created_at' , 'updated_at','model_type' , 'model_id'] ;
     protected static function booted()
