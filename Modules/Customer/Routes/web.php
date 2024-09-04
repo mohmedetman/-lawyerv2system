@@ -14,5 +14,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group([], function () {
-    Route::resource('customer', CustomerController::class)->names('customer');
+//    Route::resource('customer', CustomerController::class)->names('customer');
 });

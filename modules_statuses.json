@@ -4,5 +4,6 @@
     "BailiffPaper": true,
     "Customer": true,
     "Lawyer": true,
-    "PowerAttorney": true
+    "PowerAttorney": true,
+    "Bailiff": true
 }

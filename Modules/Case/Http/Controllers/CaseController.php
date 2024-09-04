@@ -2,6 +2,7 @@
 
 namespace Modules\Case\Http\Controllers;
 
+use App\Helpers\ImageUploader;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CaseFileEmployee;
 use App\Http\Resources\CaseFileResource;
@@ -22,6 +23,7 @@ use function PHPUnit\Framework\returnArgument;
 
 class CaseController extends Controller
 {
+    use ImageUploader ;
 
     public function addCaseFile(Request $request)
     {
@@ -34,7 +36,7 @@ class CaseController extends Controller
             "customer_id" => 'required|integer|exists:customers,id',
             "case_type_id" => 'required|integer|exists:case_types,id',
             "case_degree_id" => 'required|integer|exists:case_degrees,id',
-
+            'case_number' => 'required|max:255|unique:case_files,case_number',
         ];
         $flag = 0;
         if ($personal_token == "Modules\Lawyer\Entities\Lawyer") {
@@ -58,13 +60,19 @@ class CaseController extends Controller
         }
         try {
             DB::beginTransaction();
+            $image = '' ;
+            if ($request->hasFile('file')) {
+                $image = $this->uploadImage($request->image,'cases');
+            }
             $case_file = CaseFile::updateOrCreate([
                 'court_en' => $request->court_en,
                 'case_degree_id' => $request->case_degree_id,
                 'case_type_id' => $request->case_type_id,
                 'created_by' => Auth::user()->id,
+                'case_number'=>$request->case_number,
                 "customer_id" => $request->customer_id,
                 'status' => $request->status ?? 'confirm',
+                'file' => $image,
                 'model_type' => $personal_token == "Modules\Lawyer\Entities\Lawyer" ? "Lawyer" : "Employee",
                 'court_ar' => $request->court_ar,
                 'lawyer_id' => $personal_token == "Modules\Lawyer\Entities\Lawyer" ? Auth::user()->id : Auth::user()->lawyer_id,
@@ -104,7 +112,10 @@ class CaseController extends Controller
         $personal_token = PersonalAccessToken::find($token)->tokenable_type;
 
         $caseFile = CaseFile::findOrFail($caseFileId);
-
+        $file = '' ;
+        if ($request->hasFile('file')) {
+            $file = $this->uploadImage($request->image,'cases',$caseFile->file);
+        }
         $rules = [
             'court_en' => 'sometimes|required_without:court_ar|string|max:255',
             'court_ar' => 'sometimes|required_without:court_en|string|max:255',
@@ -134,11 +145,13 @@ class CaseController extends Controller
 
             $caseFile->update([
                 'court_en' => $request->court_en ?? $caseFile->court_en,
+                'case_number'=>$request->case_number?? $caseFile->case_number,
                 'case_degree_id' => $request->case_degree_id ?? $caseFile->case_degree_id,
                 'case_type_id' => $request->case_type_id ?? $caseFile->case_type_id,
                 'customer_id' => $request->customer_id ?? $caseFile->customer_id,
                 'model_type' => $personal_token == "Modules\Lawyer\Entities\Lawyer" ? "Lawyer" : "Employee",
                 'court_ar' => $request->court_ar ?? $caseFile->court_ar,
+                'file'=> $file ?? $caseFile->file,
                 'status' => $request->status ?? 'confirm',
                 'lawyer_id' => $personal_token == "Modules\Lawyer\Entities\Lawyer" ? Auth::user()->id : Employee::where('id', PersonalAccessToken::find($token)->tokenable_id)->first()->lawyer_id,
                 'permission' => $request->permission ?? $caseFile->permission,

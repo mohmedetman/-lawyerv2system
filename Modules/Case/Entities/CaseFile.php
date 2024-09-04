@@ -33,7 +33,8 @@ class CaseFile extends Model
         'decision_ar',
         'status',
         'case_type_id',
-        'case_degree_id'
+        'case_degree_id',
+        'case_number'
     ];
     public function lawyer()
     {

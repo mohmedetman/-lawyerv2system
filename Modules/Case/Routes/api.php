@@ -6,6 +6,9 @@ use Modules\Case\Http\Controllers\CaseController;
 use Modules\Case\Http\Controllers\CaseDegreeController;
 use Modules\Case\Http\Controllers\CaseTypeController;
 use Modules\Case\Http\Controllers\JudicialAgendasController;
+use Modules\Case\Http\Controllers\PowerAttorneyController;
+use Modules\Case\Http\Controllers\SessionController;
+use Modules\Case\Http\Controllers\SessionResultController;
 use Modules\Case\Http\Controllers\WorkDistributionController;
 
 /*
@@ -41,7 +44,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::apiResource('work-distributions', WorkDistributionController::class);
-    Route::apiResource('power-attorney', \Modules\Case\Http\Controllers\PowerAttorneyController::class);
+    Route::apiResource('power-attorney', \Modules\Case\Http\Controllers\PowerAttorneyController::class)->except(['update']);
+    Route::post('power_attorney/update/{id}', [PowerAttorneyController::class, 'update']);
+
+    Route::apiResource('session', \Modules\Case\Http\Controllers\SessionController::class)->except(['update']);
+    Route::post('session/update/{id}', [SessionController::class, 'update']);
+
+    Route::apiResource('session-result', \Modules\Case\Http\Controllers\SessionResultController::class)->except(['update']);
+    Route::post('session-result/update/{id}', [SessionResultController::class, 'update']);
+
 
 
 });

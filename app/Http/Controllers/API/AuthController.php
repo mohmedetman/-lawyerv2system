@@ -125,7 +125,8 @@ class AuthController extends Controller
 
     public function userRoleRedirection(){
         $personal_token = PersonalAccessToken::find(request()->bearerToken());
-        if($personal_token->tokenable_type  =="App\Models\Lawyer"){
+//        dd($personal_token);
+        if(str_contains(strtolower($personal_token->tokenable_type), 'lawyer')){
             return response()->json([
                 'type' => 'lawyer'
             ]);

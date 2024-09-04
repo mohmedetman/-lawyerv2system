@@ -1,0 +1,11 @@
+{
+    "name": "Bailiff",
+    "alias": "bailiff",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Bailiff\\Providers\\BailiffServiceProvider"
+    ],
+    "files": []
+}

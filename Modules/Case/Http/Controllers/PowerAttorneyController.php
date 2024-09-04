@@ -37,20 +37,18 @@ class PowerAttorneyController extends Controller
           'image'=>'required'
       ]);
       if ($data->fails()) {
-          return \response()->json(['errors' => $data->getMessageBag()->toArray()]);
+          return \response()->json(['errors' => $data->getMessageBag()->toArray()],404);
       }
       $image = '' ;
       if ($request->hasFile('image')) {
-          $image = $this->uploadImage($request->image,'power_attorney','post');
+          $image = $this->uploadImage($request->image,'power_attorney');
       }
-//      dd('4');
-//      dd(PowerAttorney::all());
         PowerAttorney::create([
          'customer_id' => $request->customer_id,
          'numeric_classification'=>$request->numeric_classification,
          'alphabetic_classification'=>$request->alphabetic_classification,
          'image'=>$image?? '',
-          'notes'=>$request->notes
+          'notes'=>$request->notes,
      ]);
       return \response()->json(['success' => 'Power Attorney added successfully.']);
 
@@ -75,9 +73,34 @@ class PowerAttorneyController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id): RedirectResponse
+    public function update(Request $request, $id)
     {
-        //
+        $data = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'numeric_classification' => 'sometimes|required',
+            'alphabetic_classification' => 'sometimes|required',
+            'customer_id'=>'sometimes|required',
+            'image'=>'sometimes|required'
+        ]);
+        $power = PowerAttorney::find($id);
+        if (!$power) {
+            return response()->json(['error' => 'Power Attorney not found.'],404);
+        }
+        if ($data->fails()) {
+            return \response()->json(['errors' => $data->getMessageBag()->toArray()],404);
+        }
+        $image = '' ;
+        if ($request->hasFile('image')) {
+            $image = $this->uploadImage($request->image,'power_attorney',$power->image);
+        }
+        $power->update([
+            'alphabetic_classification'=>$request->alphabetic_classification ?? $power->alphabetic_classification,
+            'numeric_classification'=>$request->numeric_classification ?? $power->numeric_classification,
+            'customer_id'=>$request->customer_id ?? $power->customer_id,
+            'notes'=>$request->notes ?? $power->notes,
+            'image'=> $image ?? $power->image
+
+        ]);
+        return \response()->json(['success' => 'Power Attorney updated successfully.']);
     }
 
     /**
@@ -85,6 +108,16 @@ class PowerAttorneyController extends Controller
      */
     public function destroy($id)
     {
+        $power = PowerAttorney::find($id);
+        if (!$power) {
+            return response()->json(['error' => 'Power Attorney not found.']);
+        }
+        $image_path = public_path().'/'.'uploads/'.'power_attorney'.'/'.$power->image;
+        if(file_exists($image_path)) {
+            unlink($image_path);
+        }
+        $power->delete();
+        return \response()->json(['success' => 'Power Attorney deleted successfully.']);
         //
     }
 }

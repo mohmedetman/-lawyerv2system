@@ -1,0 +1,31 @@
+{
+    "name": "nwidart/bailiff",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Bailiff\\": "",
+            "Modules\\Bailiff\\App\\": "app/",
+            "Modules\\Bailiff\\Database\\Factories\\": "database/factories/",
+            "Modules\\Bailiff\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Bailiff\\Tests\\": "tests/"
+        }
+    }
+}

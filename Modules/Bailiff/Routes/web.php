@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::group([], function () {
-//    Route::resource('case', CaseController::class)->names('case');
-});
+//
+//Route::group([], function () {
+//    Route::resource('bailiff', BailiffController::class)->names('bailiff');
+//});

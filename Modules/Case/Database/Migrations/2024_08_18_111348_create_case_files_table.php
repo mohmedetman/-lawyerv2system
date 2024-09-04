@@ -17,8 +17,8 @@ return new class extends Migration
             $table->text('court_en')->nullable();
             $table->text('court_ar')->nullable();
             $table->integer('customer_id')->nullable();//lawyer_id
-            $table->integer('employee_id')->nullable();//lawyer_id
             $table->integer('lawyer_id')->nullable();//lawyer_id
+            $table->string('case_number')->unique();
             $table->unsignedBigInteger('case_type_id'); // Foreign key to case_types
             $table->unsignedBigInteger('case_degree_id'); // Foreign key to case_degrees
             $table->foreign('case_type_id')->references('id')->on('case_types')->onDelete('cascade');
