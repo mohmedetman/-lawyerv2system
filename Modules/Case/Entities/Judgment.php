@@ -25,7 +25,10 @@ class Judgment extends Model
  public function case() {
      return $this->belongsTo(CaseFile::class);
  }
- public $hidden = ['updated_at','created_at'];
+
+
+
+    public $hidden = ['updated_at','created_at'];
 
 
 }

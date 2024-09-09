@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('work_distributions', function (Blueprint $table) {
             $table->id();
-            $table->
-
+            $table->integer('employee_id');
+            $table->integer('case_id');
+            $table->string('action');
             $table->timestamps();
         });
     }

@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,12 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//Route::get('/', function () {
-////   dd ( \Modules\Customer\Entities\Customer::all());
-//    dd('d');
-//    return view('welcome');
-//});
-Route::post('store', [App\Http\Controllers\HomeController::class,'store'])->name('store');
+Route::get('/', function () {
+
+
+    return view('welcome');
+});
+//Route::post('store', [App\Http\Controllers\HomeController::class,'store'])->name('store');
 //Auth::routes();
 
 //Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
