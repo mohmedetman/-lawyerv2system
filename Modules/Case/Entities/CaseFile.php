@@ -56,5 +56,6 @@ class CaseFile extends Model
     {
         return $this->hasOne(Customer::class, 'id','customer_id');
     }
+    public $hidden = ['model_type','lawyer_id','updated_at','created_at'];
 }
 

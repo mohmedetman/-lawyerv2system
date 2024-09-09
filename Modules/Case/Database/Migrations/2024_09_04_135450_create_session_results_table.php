@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::create('session_results', function (Blueprint $table) {
             $table->id();
-            
+            $table->integer('session_id');
+            $table->string('result');
+            $table->text('legal_reasons')->nullable();
+            $table->text('practical_reasons')->nullable();
             $table->timestamps();
         });
     }

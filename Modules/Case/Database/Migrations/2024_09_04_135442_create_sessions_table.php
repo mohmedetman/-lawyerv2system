@@ -13,7 +13,13 @@ return new class extends Migration
     {
         Schema::create('sessions', function (Blueprint $table) {
             $table->id();
-            
+            $table->integer('case_id');
+            $table->date('session_date');
+            $table->string('name')->nullable();
+            $table->time('session_time');
+            $table->integer('lawyer_id');
+            $table->string('location')->nullable();
+            $table->string('presiding_judge')->nullable();
             $table->timestamps();
         });
     }

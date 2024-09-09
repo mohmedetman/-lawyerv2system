@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Modules\Case\Http\Controllers\CaseController;
 use Modules\Case\Http\Controllers\CaseDegreeController;
 use Modules\Case\Http\Controllers\CaseTypeController;
+use Modules\Case\Http\Controllers\JudgmentController;
 use Modules\Case\Http\Controllers\JudicialAgendasController;
 use Modules\Case\Http\Controllers\PowerAttorneyController;
 use Modules\Case\Http\Controllers\SessionController;
@@ -49,9 +50,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::apiResource('session', \Modules\Case\Http\Controllers\SessionController::class)->except(['update']);
     Route::post('session/update/{id}', [SessionController::class, 'update']);
+    Route::get('session-case/{id}', [SessionController::class, 'sessionCase']);
+
 
     Route::apiResource('session-result', \Modules\Case\Http\Controllers\SessionResultController::class)->except(['update']);
     Route::post('session-result/update/{id}', [SessionResultController::class, 'update']);
+
+    Route::apiResource('judgments', \Modules\Case\Http\Controllers\JudgmentController::class)->except(['update']);
+    Route::get('judgments-case/{id}', [JudgmentController::class, 'judgmentCase']);
+    Route::post('judgments/update/{id}', [JudgmentController::class, 'update']);
+
 
 
 
