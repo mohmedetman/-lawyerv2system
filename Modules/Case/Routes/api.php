@@ -46,7 +46,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::apiResource('work-distributions', WorkDistributionController::class);
     Route::apiResource('power-attorney', \Modules\Case\Http\Controllers\PowerAttorneyController::class)->except(['update']);
-    Route::post('power_attorney/update/{id}', [PowerAttorneyController::class, 'update']);
+    Route::post('power_attorney/update/{id}', [PowerAttorneyController::class, 'update'])->name('power_attorney.update');
 
     Route::apiResource('session', \Modules\Case\Http\Controllers\SessionController::class)->except(['update']);
     Route::post('session/update/{id}', [SessionController::class, 'update']);
@@ -61,6 +61,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('judgments/update/{id}', [JudgmentController::class, 'update']);
 
 
-
+    Route::apiResource('judgments-reports', \Modules\Case\Http\Controllers\JudicialReportController::class)->except(['update']);
+    Route::post('judgments-reports/update/{id}', [\Modules\Case\Http\Controllers\JudicialReportController::class, 'update']);
 
 });

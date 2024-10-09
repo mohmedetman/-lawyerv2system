@@ -2,12 +2,18 @@
 
 namespace Modules\Office\Http\Controllers;
 
+use App\Helpers\TokenType;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Modules\Office\Entities\CaseHistory;
 
 class CaseHistoryController extends Controller
 {
+    use TokenType;
+
     public array $data = [];
 
     /**
@@ -15,9 +21,7 @@ class CaseHistoryController extends Controller
      */
     public function index(): JsonResponse
     {
-        //
-
-        return response()->json($this->data);
+        return response()->json(CaseHistory::all());
     }
 
     /**
@@ -25,9 +29,23 @@ class CaseHistoryController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        //
+        $data = Validator::make($request->all(), [
+            'title' => 'required',
+            'description' => 'required',
+            'date' => 'required|date',
+        ]);
+      if ($data->fails()) {
+          return response()->json(['errors' => $data->errors()->all()]);
+      }
+      $auth = $this->generateToken();
 
-        return response()->json($this->data);
+        CaseHistory::create
+        (
+            array_merge(
+                $request->all() , ['lawyer_id'=> $auth=='lawyer' ? Auth::user()->id : Auth::user()->lawyer_id]
+            )
+        );
+        return response()->json(['message' => 'Case History created successfully']);
     }
 
     /**
@@ -37,7 +55,7 @@ class CaseHistoryController extends Controller
     {
         //
 
-        return response()->json($this->data);
+        return response()->json(CaseHistory::find($id));
     }
 
     /**
@@ -45,9 +63,25 @@ class CaseHistoryController extends Controller
      */
     public function update(Request $request, $id): JsonResponse
     {
-        //
+        $data = Validator::make($request->all(), [
+            'title' => 'sometimes|required',
+            'description' => 'sometimes',
+            'date' => 'sometimes|date',
+        ]);
+        if ($data->fails()) {
+            return response()->json(['errors' => $data->errors()->all()]);
+        }
+        $case_history = CaseHistory::where('id', $id)->first();
+        if ($case_history==null) {
+            return response()->json(['message' => 'Case History not found'],404);
+        }
+        $case_history->update([
+            'title' => $request->title ?? $case_history->title,
+            'description' => $request->description ?? $case_history->description,
+            'date' => $request->date ?? $case_history->date,
+        ]);
 
-        return response()->json($this->data);
+        return response()->json(['message' => 'Case History updated successfully']);
     }
 
     /**
@@ -55,8 +89,11 @@ class CaseHistoryController extends Controller
      */
     public function destroy($id): JsonResponse
     {
-        //
-
-        return response()->json($this->data);
+        $case_history = CaseHistory::where('id', $id)->first();
+        if ($case_history==null) {
+            return response()->json(['message' => 'Case History not found'],404);
+        }
+        $case_history->delete();
+        return response()->json(['message' => 'Case History deleted successfully']);
     }
 }

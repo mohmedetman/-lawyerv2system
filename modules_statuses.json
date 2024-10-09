@@ -6,5 +6,6 @@
     "Lawyer": true,
     "PowerAttorney": true,
     "Bailiff": true,
-    "Office": true
+    "Office": true,
+    "ProductModule": true
 }

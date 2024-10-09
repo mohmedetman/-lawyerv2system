@@ -16,4 +16,13 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('office',\Modules\Office\Http\Controllers\OfficeLawController::class)->except(['update']);
     Route::post('office/update/{id}', [\Modules\Office\Http\Controllers\OfficeLawController::class, 'update']);
+
+    Route::post('office/getLawyerOffice', [\Modules\Office\Http\Controllers\OfficeLawController::class, 'getLawyerOffice']);
+
+
+
+    Route::apiResource('caseHistory',\Modules\Office\Http\Controllers\CaseHistoryController::class)->except(['update']);
+    Route::post('caseHistory/update/{id}', [\Modules\Office\Http\Controllers\CaseHistoryController::class, 'update']);
+
+
 });

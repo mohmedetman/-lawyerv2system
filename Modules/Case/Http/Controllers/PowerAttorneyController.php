@@ -77,7 +77,8 @@ class PowerAttorneyController extends Controller
     {
         $data = \Illuminate\Support\Facades\Validator::make($request->all(), [
             'numeric_classification' => 'sometimes|required',
-            'alphabetic_classification' => 'sometimes|required',
+            'alphabetic_classification' =>['sometimes',new CheckUniqeClassification],
+//            'alphabetic_classification' => 'sometimes|required',
             'customer_id'=>'sometimes|required',
             'image'=>'sometimes|required'
         ]);

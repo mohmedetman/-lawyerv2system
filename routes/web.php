@@ -1,7 +1,9 @@
 <?php
 
+use App\Traits\Translatable;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Request;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -15,8 +17,6 @@ use Illuminate\Support\Facades\Request;
 */
 
 Route::get('/', function () {
-
-
     return view('welcome');
 });
 //Route::post('store', [App\Http\Controllers\HomeController::class,'store'])->name('store');

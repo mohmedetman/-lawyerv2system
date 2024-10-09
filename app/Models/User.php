@@ -58,4 +58,17 @@ class User extends Authenticatable
     {
         return $this->hasOne(Lawyer::class, 'id', 'lawyer_id');
     }
+    const LANGUAGES = [
+        'en' => 'English',
+        'es' => 'Spanish',
+        'fr' => 'French',
+        'de' => 'German',
+        'ru' => 'Russian',
+        'ar' => 'Arabic',
+//        'zh' => 'Chinese',
+//        'tr' => 'Turkish',
+        //        'pt' => 'Portuguese',
+
+//        'it' => 'Italian',
+    ];
 }

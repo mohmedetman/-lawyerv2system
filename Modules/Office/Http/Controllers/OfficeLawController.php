@@ -2,23 +2,27 @@
 
 namespace Modules\Office\Http\Controllers;
 
+use App\Helpers\TokenType;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\LawOfficeResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Sanctum\PersonalAccessToken;
 use Modules\Office\Entities\LawOffice;
 
 class OfficeLawController extends Controller
 {
-    public array $data = [];
-
+    public array $data = [] ;
+    use TokenType ;
     /**
      * Display a listing of the resource.
      */
     public function index(): JsonResponse
     {
-
-        return response()->json($this->data);
+       $law_office = LawOffice::all();
+        return response()->json(LawOfficeResource::collection($law_office));
     }
 
     /**
@@ -47,9 +51,21 @@ class OfficeLawController extends Controller
            });
         $specializations = rtrim($specializations,',');
         $phones = rtrim($phones,',');
-        LawOffice::create(
-            $request->all(),
+       $auth = $this->generateToken();
+        LawOffice::updateOrCreate(
+            [
+                'lawyer_id' => $auth == 'lawyer' ? Auth::user()->id : Auth::user()->lawyer_id
+            ],
+            [
+                'name' => $request->input('name'),
+                'description' => $request->input('description'),
+                'specializations' => $specializations,
+                'history'=> $request->input('history'),
+                'phones' => $phones,
+                'lawyer_id' => $auth == 'lawyer' ? Auth::user()->id : Auth::user()->lawyer_id
+            ]
         );
+
         return response()->json(['massage'=>'success'],201);
 
     }
@@ -59,9 +75,9 @@ class OfficeLawController extends Controller
      */
     public function show($id): JsonResponse
     {
-        //
 
-        return response()->json($this->data);
+        $law_office = LawOffice::where('id',$id)->first();
+        return response()->json(LawOfficeResource::collection($law_office));
     }
 
     /**
@@ -79,12 +95,17 @@ class OfficeLawController extends Controller
      */
     public function destroy($id): JsonResponse
     {
-        //
-
-        return response()->json($this->data);
+        LawOffice::destroy($id);
+        return response()->json(['massage'=>'success'],200);
     }
-    public function getOfficeLaw(Request $request)
+    public function getLawyerOffice()
     {
+        $auth = $this->generateToken();
+        return response()->json(LawOfficeResource::make(
+            LawOffice::where('lawyer_id',$auth=='lawyer'
+                ?
+                Auth::user()->id : Auth::user()->lawer_id)->first()));
 
     }
+
 }

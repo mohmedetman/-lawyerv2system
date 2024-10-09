@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('case_histories', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('law_office_id');
+            $table->foreignId('lawyer_id');
             $table->string('title');
             $table->text('description');
             $table->date('date');

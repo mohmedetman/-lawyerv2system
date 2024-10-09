@@ -338,7 +338,7 @@ class CaseController extends Controller
     {
        $case_file = CaseEmployee::where('case_id', $case_id)
                     ->with('employee')
-                    ->where('status', '=', 'pending')
+                    ->where('status', '=', 'confirmed')
                    ->whereHas('case', function ($query) {
                     $query->where('lawyer_id',Auth::user()->id);
                     })
